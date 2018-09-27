@@ -86,12 +86,6 @@ app.post('/api/set/:bundleId/:buildNum', function(request, response){
     });        
 });
 
-function connectDB(callback){
-    mongo.connect(dburl, function(err, db){
-        var dbo = db.db("mydb");
-        callback(dbo)
-    });
-}
 
 app.post('/api/bump/:bundleId', function(req, response){        
     // TODO: validate parameter.
@@ -104,4 +98,34 @@ app.post('/api/bump/:bundleId', function(req, response){
         });    
     });
     
+});
+
+
+// routes to serve the static HTML files
+app.get('/', function(req, res) {
+    res.sendfile('public/index.html');
+});
+
+// serve static html files
+app.use(express.static('/public'));
+
+
+// Add headers
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'file:///C:/Users/asharabiani/Google%20Drive/sagomini/build-number/index.html');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
 });
