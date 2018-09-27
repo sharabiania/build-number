@@ -1,0 +1,42 @@
+<!doctype html>
+<html ng-app="App">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.4/angular.min.js"></script>
+    <script>
+    angular.module('App', [])
+    .controller('buildsController', function($scope, $http) {
+        var self = this;
+        self.baseUrl = "http://localhost:1337/api/";
+        $scope.bundleId = "com.sagomini.homework";
+        $scope.build = 0;
+        $scope.bump = function(){
+            $http.post(self.baseUrl + "bump/" + $scope.bundleId)
+            .then(function(response){$scope.build = response.data});
+        }
+        $scope.set = function() {
+            $http.post(self.baseUrl + "set/" + $scope.bundleId + "/" + $scope.newBuildNum)
+            .then(function(res){$scope.build = res.data});
+        }
+        self.get = function() {
+          var xhttp = new XMLHttpRequest();
+          $http.get(self.baseUrl + "read/" + $scope.bundleId)
+          .then(function(res){
+              if(res && res.data)
+                $scope.build = res.data.build;
+              else $scope.build = "Not found";
+          });                                    
+        }
+        self.get();
+        
+    });
+    </script>
+  </head>
+  <body>
+    <div ng-controller="buildsController as bc">
+        <p>Bundle Id: <input ng-model="bundleId" /> </p>
+        <p>Current build number is: <span>{{build}}</span></p>
+        <input type="number" required="required" ng-model="newBuildNum" /><button ng-click="set()">Set</button>
+        <button ng-click="bump()">Bump</button>
+    </div>
+  </body>
+</html>
